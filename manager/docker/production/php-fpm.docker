@@ -16,7 +16,7 @@ WORKDIR /app
 
 COPY ./composer.json ./composer.lock ./
 
-RUN composer install --no-dev --prefer-dist --optimize-autoloader
+RUN composer install --no-dev --no-scripts --prefer-dist --optimize-autoloader
 
 ############
 
@@ -33,4 +33,8 @@ WORKDIR /app
 COPY --from=builder /app ./
 
 COPY ./ ./
+
+ENV APP_ENV prod
+
+RUN php bin/console assets:install
 
