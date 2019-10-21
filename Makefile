@@ -1,20 +1,19 @@
-dev-up:
-	docker run -d --name manager-apache -v ${PWD}/manager:/app -p 8080:80 manager-apache
+up: docker-up
 
-dev-down:
-	docker stop manager-apache
-	docker rm manager-apache
+# Full update
+init: docker-dowm docker-pull docker-build docker-up
 
-dev-build:
-	docker build --file=manager/docker/development/php-cli.docker --tag manager-php-cli manager/docker/development
-	docker build --file=manager/docker/development/apache.docker --tag manager-apache manager/docker/development
+docker-up:
+	docker-compose up -d
 
-dev-cli:
-	docker run --rm -v ${PWD}/manager:/app manager-php-cli php bin/app.php
+docker-dowm:
+	docker-compose down --remove-orphans
 
-prod-build:
-	docker build --file=manager/docker/production/php-cli.docker --tag manager-php-cli manager
-	docker build --file=manager/docker/production/apache.docker --tag manager-apache manager
+docker-pull:
+	docker-compose pull
 
-prod-cli:
-	docker run --rm manager-php-cli php bin/app.php
+docker-build:
+	docker-compose build
+
+cli:
+	docker-compose run --rm manager-php-cli php bin/app.php
