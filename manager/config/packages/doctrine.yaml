@@ -3,13 +3,14 @@ doctrine:
         # configure these for your database server
         # use postgresql for PostgreSQL
         # use sqlite for SQLite
-        driver: 'pdo_pgsql'
-        server_version: '11.2'
+        driver: 'mysql'
+        server_version: '5.7'
 
         # only needed for MySQL
-        charset: utf8
+        charset: utf8mb4
         default_table_options:
-            charset: utf8
+            charset: utf8mb4
+            collate: utf8mb4_unicode_ci
 
         url: '%env(resolve:DATABASE_URL)%'
     orm:
