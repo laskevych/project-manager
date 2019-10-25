@@ -2,10 +2,8 @@
 
 namespace App\Tests\Unit\Model\User\Entity\User\Reset;
 
-use App\Model\User\Entity\User\Email;
-use App\Model\User\Entity\User\Id;
 use App\Model\User\Entity\User\ResetToken;
-use App\Model\User\Entity\User\User;
+use App\Tests\Builder\User\UserBuilder;
 use PHPUnit\Framework\TestCase;
 
 class RequestTest extends TestCase
@@ -17,7 +15,7 @@ class RequestTest extends TestCase
         $token = new ResetToken('token', $now->modify('+1 day'));
 
 
-        $user = $this->buildSignedUpByEmailUser();
+        $user = (new UserBuilder())->withEmail()->build();
 
         $user->requestPasswordReset($token, $now);
 
@@ -30,7 +28,7 @@ class RequestTest extends TestCase
         $token = new ResetToken('token', $now->modify('+1 day'));
 
 
-        $user = $this->buildSignedUpByEmailUser();
+        $user = (new UserBuilder())->withEmail()->build();
 
         $user->requestPasswordReset($token, $now);
 
@@ -44,7 +42,7 @@ class RequestTest extends TestCase
         $now = new \DateTimeImmutable();
         $token1 = new ResetToken('token', $now->modify('+1 day'));
 
-        $user = $this->buildSignedUpByEmailUser();
+        $user = (new UserBuilder())->withEmail()->build();
         $user->requestPasswordReset($token1, $now);
 
         self::assertEquals($token1, $user->getResetToken());
@@ -60,33 +58,11 @@ class RequestTest extends TestCase
         $now = new \DateTimeImmutable();
         $token = new ResetToken('token', $now->modify('+1 day'));
 
-        $user = $this->buildUser();
+        $user = $user = (new UserBuilder())->withNetwork()->build();
 
         self::expectExceptionMessage('User has not email.');
         $user->requestPasswordReset($token, $now);
 
 
-    }
-    private function buildUser(): User
-    {
-        return new User(
-            Id::next(),
-            new \DateTimeImmutable()
-        );
-    }
-
-    private function buildSignedUpByEmailUser(): User
-    {
-        $user = $this->buildUser();
-
-        $user->signUpByEmail(
-            new Email('test@gmail.com'),
-            'hash',
-            'test'
-        );
-
-        $user->confirmSignUp();
-
-        return $user;
     }
 }
