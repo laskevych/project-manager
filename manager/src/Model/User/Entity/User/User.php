@@ -47,6 +47,11 @@ class User
      */
     private $networks;
 
+    /**
+     * @var ResetToken
+     */
+    private $resetToken;
+
     public function __construct(Id $id, \DateTimeImmutable $date)
     {
         $this->id = $id;
@@ -85,6 +90,30 @@ class User
     }
 
 
+    public function requestPasswordReset(ResetToken $token, \DateTimeImmutable $date): void
+    {
+        if (!$this->email) {
+            throw new \DomainException('User has not email.');
+        }
+        if ($this->resetToken && !$this->resetToken->isExpiredTo($date)) {
+            throw new \DomainException('Resetting is already requested.');
+        }
+
+        $this->resetToken = $token;
+    }
+
+    public function passwordReset(\DateTimeImmutable $date, string $hash): void
+    {
+        if (!$this->resetToken) {
+            throw new \DomainException('Resetting is not requested.');
+        }
+        if ($this->resetToken->isExpiredTo($date)) {
+            throw new \DomainException('Reset token is expired.');
+        }
+        $this->passwordHash = $hash;
+        $this->resetToken = null;
+    }
+
     public function isWait(): bool
     {
         return $this->status === self::STATUS_WAIT;
@@ -105,31 +134,53 @@ class User
         $this->confirmToken = null;
     }
 
+    /**
+     * @return Id
+     */
     public function getId(): Id
     {
         return $this->id;
     }
 
+    /**
+     * @return \DateTimeImmutable
+     */
     public function getDate(): \DateTimeImmutable
     {
         return $this->date;
     }
 
+    /**
+     * @return Email|null
+     */
     public function getEmail(): ?Email
     {
         return $this->email;
     }
 
+    /**
+     * @return string|null
+     */
     public function getPasswordHash(): ?string
     {
         return $this->passwordHash;
     }
 
+    /**
+     * @return string|null
+     */
     public function getConfirmToken(): ?string
     {
         return $this->confirmToken;
     }
 
+    /**
+     * @return ResetToken
+     */
+    public function getResetToken(): ?ResetToken
+    {
+        return $this->resetToken;
+    }
     /**
      * @return Network[]
      */
