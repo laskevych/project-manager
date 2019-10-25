@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Model\User\UseCase\SignUp\Request;
+namespace App\Model\User\UseCase\Network\Auth;
 
 use App\Model\User\Entity\User\Email;
 use App\Model\User\Entity\User\Id;
@@ -16,31 +16,20 @@ use App\Model\User\Service\ConfirmTokenSender;
 class Handler
 {
     private $users;
-    private $hasher;
     private $flusher;
-    private $tokenizer;
-    public $sender;
 
     public function __construct(
         UserRepository $users,
-        PasswordHasher $hasher,
-        ConfirmTokenizer $tokenizer,
-        ConfirmTokenSender $sender,
         Flusher $flusher
     )
     {
         $this->users = $users;
-        $this->hasher = $hasher;
-        $this->tokenizer = $tokenizer;
-        $this->sender = $sender;
         $this->flusher = $flusher;
     }
 
     public function handle(Command $command): void
     {
-        $email = new Email($command->email);
-
-        if ($this->users->hasByEmail($email)) {
+        if ($this->users->hasByNetworkIdentity($command->network, $command->identity)) {
             throw new \DomainException('User already exists.');
         }
 
@@ -49,14 +38,9 @@ class Handler
             new \DateTimeImmutable()
         );
 
-        $user->signUpByEmail($email,
-            $this->hasher->hash($command->password),
-            $token = $this->tokenizer->generate()
-        );
+        $user->signUpByNetwork($command->network, $command->identity);
 
         $this->users->add($user);
-
-        $this->sender->send($email, $token);
 
         $this->flusher->flush();
     }

@@ -1,7 +1,8 @@
 <?php
 
+declare(strict_types=1);
 
-namespace App\Tests\Unit\Model\User\Entity\User\SingUp;
+namespace App\Tests\Unit\Model\User\Entity\User\SignUp;
 
 use App\Model\User\Entity\User\Email;
 use App\Model\User\Entity\User\Id;
@@ -14,7 +15,10 @@ class RequestTest extends TestCase
     {
         $user = new User(
             $id = Id::next(),
-            $date = new \DateTimeImmutable(),
+            $date = new \DateTimeImmutable()
+        );
+
+        $user->signUpByEmail(
             $email = new Email('test@gmail.com'),
             $hash = 'hash',
             $token = 'token'

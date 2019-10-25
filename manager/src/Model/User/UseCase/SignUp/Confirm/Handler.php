@@ -27,7 +27,7 @@ class Handler
             throw new \DomainException('Incorrect or confirmed token.');
         }
 
-        $user->confirmSingUp();
+        $user->confirmSignUp();
 
         $this->flusher->flush();
     }
