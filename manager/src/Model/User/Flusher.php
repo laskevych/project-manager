@@ -6,5 +6,5 @@ namespace App\Model\User;
 
 interface Flusher
 {
-    public function flush();
+    public function flush(): void;
 }
