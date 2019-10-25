@@ -15,7 +15,7 @@ class RequestTest extends TestCase
         $token = new ResetToken('token', $now->modify('+1 day'));
 
 
-        $user = (new UserBuilder())->withEmail()->build();
+        $user = (new UserBuilder())->withEmail()->confirmed()->build();
 
         $user->requestPasswordReset($token, $now);
 
@@ -28,8 +28,7 @@ class RequestTest extends TestCase
         $token = new ResetToken('token', $now->modify('+1 day'));
 
 
-        $user = (new UserBuilder())->withEmail()->build();
-
+        $user = (new UserBuilder())->withEmail()->confirmed()->build();
         $user->requestPasswordReset($token, $now);
 
         self::expectExceptionMessage('Resetting is already requested.');
@@ -42,7 +41,7 @@ class RequestTest extends TestCase
         $now = new \DateTimeImmutable();
         $token1 = new ResetToken('token', $now->modify('+1 day'));
 
-        $user = (new UserBuilder())->withEmail()->build();
+        $user = (new UserBuilder())->withEmail()->confirmed()->build();
         $user->requestPasswordReset($token1, $now);
 
         self::assertEquals($token1, $user->getResetToken());
@@ -58,11 +57,21 @@ class RequestTest extends TestCase
         $now = new \DateTimeImmutable();
         $token = new ResetToken('token', $now->modify('+1 day'));
 
-        $user = $user = (new UserBuilder())->withNetwork()->build();
+        $user = (new UserBuilder())->withNetwork()->build();
 
         self::expectExceptionMessage('User has not email.');
         $user->requestPasswordReset($token, $now);
+    }
 
+    public function testUserAreNotConfirmed(): void
+    {
+        $now = new \DateTimeImmutable();
+        $token = new ResetToken('token', $now->modify('+1 day'));
 
+        $user = (new UserBuilder())->withEmail()->build();
+
+        self::expectExceptionMessage('User is not confirmed.');
+
+        $user->requestPasswordReset($token, $now);
     }
 }

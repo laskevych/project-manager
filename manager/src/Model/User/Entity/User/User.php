@@ -92,6 +92,10 @@ class User
 
     public function requestPasswordReset(ResetToken $token, \DateTimeImmutable $date): void
     {
+        if ($this->isWait()) {
+            throw new \DomainException('User is not confirmed.');
+        }
+
         if (!$this->email) {
             throw new \DomainException('User has not email.');
         }
