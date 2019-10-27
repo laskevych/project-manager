@@ -4,17 +4,24 @@
 namespace App\Model\User\Entity\User;
 
 use Ramsey\Uuid\Uuid;
+use Doctrine\ORM\Mapping as ORM;
 
 class Network
 {
     /**
      * @var string
+     * @ORM\Column(type="guid")
+     * @ORM\Id
      */
     private $id;
+
     /**
      * @var User
+     * @ORM\ManyToOne(targetEntity="User")
+     * @ORM\JoinColumn(name="user_id", referencedColumnName="id")
      */
     private $user;
+
     /**
      * @var string
      */
