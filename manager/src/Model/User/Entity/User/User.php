@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Model\User\Entity\User;
 
-
 use Doctrine\Common\Collections\ArrayCollection;
+use mysql_xdevapi\Exception;
 
 class User
 {
@@ -48,6 +48,11 @@ class User
     private $networks;
 
     /**
+     * @var Role
+     */
+    private $role;
+
+    /**
      * @var ResetToken
      */
     private $resetToken;
@@ -56,6 +61,7 @@ class User
     {
         $this->id = $id;
         $this->date = $date;
+        $this->role = Role::user();
         $this->networks = new ArrayCollection();
     }
 
@@ -122,6 +128,15 @@ class User
         }
         $this->passwordHash = $hash;
         $this->resetToken = null;
+    }
+
+    public function changeRole(Role $role): void
+    {
+        if ($this->role->isEqual($role)) {
+            throw new \DomainException('Role is already same.');
+        }
+
+        $this->role = $role;
     }
 
     public function isWait(): bool
@@ -197,5 +212,13 @@ class User
     public function getNetworks(): array
     {
         return $this->networks->toArray();
+    }
+
+    /**
+     * @return Role
+     */
+    public function getRole(): Role
+    {
+        return $this->role;
     }
 }
