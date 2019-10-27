@@ -44,12 +44,10 @@ class Handler
             throw new \DomainException('User already exists.');
         }
 
-        $user = new User(
+        $user = User::signUpByEmail(
             Id::next(),
-            new \DateTimeImmutable()
-        );
-
-        $user->signUpByEmail($email,
+            new \DateTimeImmutable(),
+            $email,
             $this->hasher->hash($command->password),
             $token = $this->tokenizer->generate()
         );

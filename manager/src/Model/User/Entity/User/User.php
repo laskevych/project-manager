@@ -52,29 +52,35 @@ class User
      */
     private $resetToken;
 
-    public function __construct(Id $id, \DateTimeImmutable $date)
+    private function __construct(Id $id, \DateTimeImmutable $date)
     {
         $this->id = $id;
         $this->date = $date;
         $this->networks = new ArrayCollection();
     }
 
-    public function signUpByEmail(Email $email, string $hash, string $token): void
+    public static function signUpByEmail(Id $id, \DateTimeImmutable $date, Email $email, string $hash, string $token): self
     {
-        $this->email = $email;
-        $this->passwordHash = $hash;
-        $this->confirmToken = $token;
-        $this->status = self::STATUS_WAIT;
+        $user = new self($id, $date);
+        $user->email = $email;
+        $user->passwordHash = $hash;
+        $user->confirmToken = $token;
+        $user->status = self::STATUS_WAIT;
+
+        return $user;
     }
 
-    public function signUpByNetwork(string $network, string $identity): void
+    public static function signUpByNetwork(Id $id, \DateTimeImmutable $date, string $network, string $identity): self
     {
-        if ($this->isActive()) {
+        $user = new self($id, $date);
+        if ($user->isActive()) {
             throw new \DomainException('User is already signed up.');
         }
 
-        $this->attachNetwork($network, $identity);
-        $this->status = self::STATUS_ACTIVE;
+        $user->attachNetwork($network, $identity);
+        $user->status = self::STATUS_ACTIVE;
+
+        return $user;
     }
 
     public function attachNetwork(string $network, string $identity): void
