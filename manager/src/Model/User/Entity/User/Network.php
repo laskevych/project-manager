@@ -6,6 +6,12 @@ namespace App\Model\User\Entity\User;
 use Ramsey\Uuid\Uuid;
 use Doctrine\ORM\Mapping as ORM;
 
+/**
+ * @ORM\Entity
+ * @ORM\Table(name="user_user_networks", uniqueConstraints={
+ *     @ORM\UniqueConstraint(columns={"network", "identity"})
+ * })
+ */
 class Network
 {
     /**
@@ -24,11 +30,13 @@ class Network
 
     /**
      * @var string
+     * @ORM\Column(type="string", length=32, nullable=false)
      */
     private $network;
 
     /**
      * @var string
+     * @ORM\Column(type="string", length=1024, nullable=false)
      */
     private $identity;
 

@@ -10,9 +10,9 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks()
- * @ORM\Table(name="user_users', uniqueConstraints={
+ * @ORM\Table(name="user_users", uniqueConstraints={
  *     @ORM\UniqueConstraint(columns={"email"}),
- *     @ORM\UniqueConstraint(columns={"reset_token_token"}),
+ *     @ORM\UniqueConstraint(columns={"reset_token_token"})
  * })
  */
 class User
@@ -22,6 +22,7 @@ class User
 
     /**
      * @var Id
+     * @ORM\Id
      * @ORM\Column(type="user_user_id")
      */
     private $id;
@@ -40,19 +41,19 @@ class User
 
     /**
      * @var string|null
-     * @ORM\Column(type="string", nullable=true)
+     * @ORM\Column(type="string", name="password_hash", nullable=true)
      */
     private $passwordHash;
 
     /**
      * @var string|null
-     * @ORM\Column(type="string", nullable=true, name="password_hash")
+     * @ORM\Column(type="string", nullable=true, name="confirm_token")
      */
     private $confirmToken;
 
     /**
-     * @var string|null
-     * @ORM\Column(type="string", length=16, nullable=true, name="confirm_token")
+     * @var string
+     * @ORM\Column(type="string", length=16)
      */
     private $status;
 
